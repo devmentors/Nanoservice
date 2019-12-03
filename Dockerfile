@@ -1,0 +1,11 @@
+FROM mcr.microsoft.com/dotnet/core/sdk:3.0 AS build
+WORKDIR /publish
+COPY . .
+RUN dotnet publish src/Nanoservice -c release -o out
+
+FROM mcr.microsoft.com/dotnet/core/aspnet:3.0
+WORKDIR /app
+COPY --from=build /publish/out .
+ENV ASPNETCORE_ENVIRONMENT docker
+ENV ASPNETCORE_URLS http://*:5000
+ENTRYPOINT dotnet Nanoservice.dll

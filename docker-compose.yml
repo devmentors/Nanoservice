@@ -1,0 +1,24 @@
+version: "3.7"
+
+services:
+  nanoservice:
+    image: nanoservice
+    container_name: nanoservice
+    ports:
+      - 5000:5000
+    environment:
+      - 'NANO_MESSAGE=Nanoservice [compose]'
+    networks:
+      - nanoservice
+
+  next-nanoservice:
+    image: nanoservice
+    container_name: next-nanoservice
+    environment:
+      - 'NANO_MESSAGE=Next nanoservice [compose]'
+    networks:
+      - nanoservice
+
+networks:
+  nanoservice:
+    name: nanoservice-net

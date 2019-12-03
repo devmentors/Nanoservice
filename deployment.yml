@@ -1,0 +1,17 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+ name: nanoservice-dpl
+spec:
+ replicas: 3
+ template:
+   metadata:
+     labels:
+       name: nanoservice
+   spec:
+     containers:
+     - name: nanoservice
+       image: nanoservice
+       imagePullPolicy: Never
+       ports:
+       - containerPort: 5000
