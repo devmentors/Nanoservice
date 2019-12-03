@@ -2,7 +2,7 @@ version: "3.7"
 
 services:
   nanoservice:
-    image: nanoservice
+    build: .
     container_name: nanoservice
     ports:
       - 5000:5000
@@ -12,13 +12,23 @@ services:
       - nanoservice
 
   next-nanoservice:
-    image: nanoservice
+    build: .
     container_name: next-nanoservice
     environment:
       - 'NANO_MESSAGE=Next nanoservice [compose]'
     networks:
       - nanoservice
 
+  sidecar:
+    build:
+      context: .
+      dockerfile: Dockerfile.sidecar
+    container_name: sidecar
+    ports:
+      - 5050:5000
+    networks:
+      - nanoservice
+
 networks:
   nanoservice:
-    name: nanoservice-net
+    name: nanoservice-network
