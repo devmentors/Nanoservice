@@ -17,8 +17,8 @@ namespace Nanoservice
 {
     public class Program
     {
-        public static async Task Main(string[] args)
-            => await Host.CreateDefaultBuilder(args)
+        public static Task Main(string[] args)
+            => Host.CreateDefaultBuilder(args)
                 .ConfigureWebHostDefaults(webBuilder => webBuilder.ConfigureServices(services =>
                     {
                         IConfiguration configuration;
@@ -36,13 +36,13 @@ namespace Nanoservice
                     {
                         var logger = app.ApplicationServices.GetService<ILogger<Program>>();
                         var appOptions = app.ApplicationServices.GetService<IOptions<AppOptions>>().Value;
-                        
+
                         var id = GetOption(nameof(appOptions.Id), appOptions.Id);
                         if (string.IsNullOrWhiteSpace(id))
                         {
                             id = Guid.NewGuid().ToString("N");
                         }
-                        
+
                         logger.LogInformation($"Nanoservice ID: {id}");
                         var message = GetOption(nameof(appOptions.Message), appOptions.Message);
                         var file = GetOption(nameof(appOptions.File), appOptions.File);
