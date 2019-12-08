@@ -37,7 +37,7 @@ namespace Sidecar
                         .UseRouting()
                         .UseEndpoints(endpoints =>
                         {
-                            endpoints.MapGet("/_sidecar", ctx => ctx.Response.WriteAsync($"sidecar [id: {Id}]"));
+                            endpoints.MapGet("/_sidecar", ctx => ctx.Response.WriteAsync($"Sidecar [ID: {Id}]"));
                             endpoints.MapGet("{*url}", ctx => Handle(HttpMethod.Get, ctx));
                             endpoints.MapPost("{*url}", ctx => Handle(HttpMethod.Post, ctx));
                             endpoints.MapPut("{*url}", ctx => Handle(HttpMethod.Put, ctx));

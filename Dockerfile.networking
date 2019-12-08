@@ -1,0 +1,6 @@
+FROM ubuntu:latest
+RUN apt-get update && \
+    apt-get install -y iptables
+COPY networking.sh /usr/local/bin/
+RUN chmod +x /usr/local/bin/networking.sh
+ENTRYPOINT networking.sh

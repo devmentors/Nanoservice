@@ -1,0 +1,27 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nanoservice-pod
+  labels:
+    name: nanoservice
+spec:
+  initContainers:
+  - name: networking
+    image: networking
+    imagePullPolicy: Never
+    securityContext:
+      capabilities:
+        add:
+        - NET_ADMIN
+      privileged: true
+  containers:
+  - name: nanoservice
+    image: nanoservice
+    imagePullPolicy: Never
+    ports:
+    - containerPort: 5000
+  - name: sidecar
+    image: sidecar
+    imagePullPolicy: Never
+    ports:
+    - containerPort: 5050

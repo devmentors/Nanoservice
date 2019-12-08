@@ -25,7 +25,7 @@ services:
       dockerfile: Dockerfile.sidecar
     container_name: sidecar
     ports:
-      - 5050:5000
+      - 5050:5050
     networks:
       - nanoservice
 
