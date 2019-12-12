@@ -15,6 +15,7 @@ namespace Sidecar
 {
     public class Program
     {
+        private const string TraceHeader = "Trace";
         private static readonly string Id = Guid.NewGuid().ToString("N");
 
         public static Task Main(string[] args)
@@ -53,21 +54,23 @@ namespace Sidecar
             var downstream = options.Downstream;
             var path = context.Request.Path.HasValue ? context.Request.Path.Value : string.Empty;
             var url = $"{downstream}{path}";
-            var headers = options.Headers;
             var requestId = Guid.NewGuid().ToString("N");
+            var trace = context.TraceIdentifier;
+            var requestHeaders = options.RequestHeaders;
+            var responseHeaders = options.ResponseHeaders;
 
             logger.LogInformation($"Sending a request [ID: {requestId}]: {context.Request.Method} {url}");
             var httpClient = context.RequestServices.GetRequiredService<IHttpClientFactory>().CreateClient();
-
             var request = new HttpRequestMessage
             {
                 RequestUri = new Uri(url),
                 Method = method
             };
 
-            if (headers is {})
+            request.Headers.TryAddWithoutValidation(TraceHeader, trace);
+            if (requestHeaders is {})
             {
-                foreach (var (key, value) in headers)
+                foreach (var (key, value) in requestHeaders)
                 {
                     request.Headers.TryAddWithoutValidation(key, value);
                 }
@@ -87,13 +90,23 @@ namespace Sidecar
 
             logger.LogInformation($"Received a response [ID: {requestId}]: {response}");
             context.Response.StatusCode = (int) response.StatusCode;
+            context.Response.Headers.TryAdd(TraceHeader, trace);
+            if (responseHeaders is {})
+            {
+                foreach (var (key, value) in responseHeaders)
+                {
+                    context.Response.Headers.TryAdd(key, value);
+                }
+            }
+
             await context.Response.WriteAsync(await response.Content.ReadAsStringAsync());
         }
 
         private class AppOptions
         {
             public string Downstream { get; set; }
-            public IDictionary<string, string> Headers { get; set; }
+            public IDictionary<string, string> RequestHeaders { get; set; }
+            public IDictionary<string, string> ResponseHeaders { get; set; }
         }
     }
 }
